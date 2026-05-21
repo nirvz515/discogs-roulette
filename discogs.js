@@ -143,13 +143,15 @@ document.getElementById("sorteador-discogs").innerHTML = `
 <div id="dr-app">
   <div class="dr-screen">
 
-    <img 
-      src="https://raw.githubusercontent.com/nirvz515/discogs-roulette/refs/heads/main/ChatGPT%20Image%2021%20de%20mai.%20de%202026%2C%2013_27_07.png"
+    <img
+      src="https://raw.githubusercontent.com/nirvz515/discogs-roulette/main/logo.png"
       id="dr-logo"
       alt="DISCO ROULETTE 2000"
     >
 
-    <div id="dr-status">pronto para sortear</div>
+    <div id="dr-status">
+      pronto para sortear
+    </div>
 
     <div class="dr-cover-wrap">
       <img id="dr-cover" src="">
@@ -160,12 +162,18 @@ document.getElementById("sorteador-discogs").innerHTML = `
     <p id="dr-title">---</p>
     <p id="dr-year">---</p>
 
-    <button id="dr-btn">SORTEAR DISCO</button>
-    <button id="dr-reset">ZERAR HISTÓRICO</button>
+    <button id="dr-btn">
+      SORTEAR DISCO
+    </button>
+
+    <button id="dr-reset">
+      ZERAR HISTÓRICO
+    </button>
 
     <div id="dr-youtube"></div>
 
     <h4>Histórico</h4>
+
     <ul id="dr-history"></ul>
 
   </div>
@@ -173,172 +181,307 @@ document.getElementById("sorteador-discogs").innerHTML = `
 `;
 
 var USERNAME = "nirvz";
+
 var discos = [];
-var sorteados = JSON.parse(localStorage.getItem("dr_sorteados") || "[]");
-var historico = JSON.parse(localStorage.getItem("dr_historico") || "[]");
+
+var sorteados =
+JSON.parse(localStorage.getItem("dr_sorteados") || "[]");
+
+var historico =
+JSON.parse(localStorage.getItem("dr_historico") || "[]");
 
 function salvar(){
-  localStorage.setItem("dr_sorteados", JSON.stringify(sorteados));
-  localStorage.setItem("dr_historico", JSON.stringify(historico));
+  localStorage.setItem(
+    "dr_sorteados",
+    JSON.stringify(sorteados)
+  );
+
+  localStorage.setItem(
+    "dr_historico",
+    JSON.stringify(historico)
+  );
 }
 
 function atualizarHistorico(){
-  var lista = document.getElementById("dr-history");
+
+  var lista =
+  document.getElementById("dr-history");
+
   lista.innerHTML = "";
 
-  historico.slice().reverse().forEach(function(item){
-    var li = document.createElement("li");
+  historico
+  .slice()
+  .reverse()
+  .forEach(function(item){
+
+    var li =
+    document.createElement("li");
+
     li.textContent = item;
+
     lista.appendChild(li);
+
   });
+
 }
 
 async function carregarColecao(){
+
   var page = 1;
+
   var totalPages = 1;
 
   while(page <= totalPages){
+
     var url =
-      "https://api.discogs.com/users/" +
-      USERNAME +
-      "/collection/folders/0/releases?page=" +
-      page +
-      "&per_page=100";
+    "https://api.discogs.com/users/" +
+    USERNAME +
+    "/collection/folders/0/releases?page=" +
+    page +
+    "&per_page=100";
 
     var resposta = await fetch(url);
+
     var dados = await resposta.json();
 
     if(!dados.releases){
-      throw new Error("Coleção privada ou erro no Discogs.");
+      throw new Error("Coleção privada.");
     }
 
-    discos = discos.concat(dados.releases);
-    totalPages = dados.pagination.pages;
+    discos =
+    discos.concat(dados.releases);
+
+    totalPages =
+    dados.pagination.pages;
+
     page++;
+
   }
+
 }
 
 function mostrarPreview(release){
-  var info = release.basic_information;
 
-  var artista = info.artists[0]
-    ? info.artists[0].name.replace(" (2)", "")
-    : "---";
+  var info =
+  release.basic_information;
 
-  document.getElementById("dr-artist").textContent = artista;
-  document.getElementById("dr-title").textContent = info.title || "---";
-  document.getElementById("dr-year").textContent = info.year || "---";
+  var artista =
+  info.artists[0]
+  ? info.artists[0].name
+  : "---";
 
-  var img = document.getElementById("dr-cover");
+  document.getElementById(
+    "dr-artist"
+  ).textContent = artista;
+
+  document.getElementById(
+    "dr-title"
+  ).textContent = info.title || "---";
+
+  document.getElementById(
+    "dr-year"
+  ).textContent = info.year || "---";
+
+  var img =
+  document.getElementById("dr-cover");
 
   if(info.cover_image){
+
     img.src = info.cover_image;
+
     img.style.display = "block";
+
   }
+
 }
 
 function mostrarDisco(release){
-  var info = release.basic_information;
 
-  var artista = info.artists.map(function(a){
+  var info =
+  release.basic_information;
+
+  var artista =
+  info.artists
+  .map(function(a){
+
     return a.name.replace(" (2)", "");
-  }).join(", ");
+
+  })
+  .join(", ");
 
   var titulo = info.title;
-  var ano = info.year || "Ano desconhecido";
-  var capa = info.cover_image || "";
 
-  document.getElementById("dr-artist").textContent = artista;
-  document.getElementById("dr-title").textContent = titulo;
-  document.getElementById("dr-year").textContent = ano;
+  var ano =
+  info.year || "Ano desconhecido";
 
-  var img = document.getElementById("dr-cover");
+  var capa =
+  info.cover_image || "";
 
-  if(capa){
-    img.src = capa;
-    img.style.display = "block";
-  }
+  document.getElementById(
+    "dr-artist"
+  ).textContent = artista;
 
-  var busca = encodeURIComponent(artista + " " + titulo + " full album vinyl");
+  document.getElementById(
+    "dr-title"
+  ).textContent = titulo;
 
-  document.getElementById("dr-youtube").innerHTML =
+  document.getElementById(
+    "dr-year"
+  ).textContent = ano;
+
+  var img =
+  document.getElementById("dr-cover");
+
+  img.src = capa;
+
+  img.style.display = "block";
+
+  var busca =
+  encodeURIComponent(
+    artista + " " + titulo + " vinyl"
+  );
+
+  document.getElementById(
+    "dr-youtube"
+  ).innerHTML =
     '<a target="_blank" href="https://www.youtube.com/results?search_query=' +
     busca +
     '">OUVIR NO YOUTUBE</a>';
 
-  var texto = artista + " - " + titulo + " (" + ano + ")";
+  var texto =
+  artista +
+  " - " +
+  titulo +
+  " (" +
+  ano +
+  ")";
 
   if(historico.indexOf(texto) === -1){
+
     historico.push(texto);
+
   }
 
   if(sorteados.indexOf(release.id) === -1){
+
     sorteados.push(release.id);
+
   }
 
   salvar();
+
   atualizarHistorico();
 
-  var restantes = discos.length - sorteados.length;
+  var restantes =
+  discos.length - sorteados.length;
 
-  document.getElementById("dr-status").textContent =
-    "faltam " + restantes + " discos";
+  document.getElementById(
+    "dr-status"
+  ).textContent =
+    "faltam " +
+    restantes +
+    " discos";
+
 }
 
 async function sortearDisco(){
-  var status = document.getElementById("dr-status");
-  var cover = document.getElementById("dr-cover");
 
-  status.textContent = "sorteando...";
-  document.getElementById("dr-btn").textContent = "SORTEAR NOVAMENTE";
+  var status =
+  document.getElementById("dr-status");
 
-  try{
-    if(discos.length === 0){
-      await carregarColecao();
-    }
+  var cover =
+  document.getElementById("dr-cover");
 
-    var disponiveis = discos.filter(function(d){
-      return sorteados.indexOf(d.id) === -1;
-    });
+  status.textContent =
+  "sorteando...";
 
-    if(disponiveis.length === 0){
-      sorteados = [];
-      disponiveis = discos.slice();
-      status.textContent = "coleção zerada, começando de novo...";
-    }
+  document.getElementById(
+    "dr-btn"
+  ).textContent =
+  "SORTEAR NOVAMENTE";
 
-    cover.className = "rolling";
+  if(discos.length === 0){
 
-    var tempo = 0;
+    await carregarColecao();
 
-    var roleta = setInterval(function(){
-      var temp = disponiveis[Math.floor(Math.random() * disponiveis.length)];
-      mostrarPreview(temp);
-      tempo++;
-
-      if(tempo > 18){
-        clearInterval(roleta);
-        cover.className = "";
-
-        var escolhido = disponiveis[Math.floor(Math.random() * disponiveis.length)];
-        mostrarDisco(escolhido);
-      }
-    }, 90);
-
-  }catch(err){
-    status.textContent = "erro ao carregar coleção";
-    console.log(err);
   }
+
+  var disponiveis =
+  discos.filter(function(d){
+
+    return sorteados.indexOf(d.id) === -1;
+
+  });
+
+  if(disponiveis.length === 0){
+
+    sorteados = [];
+
+    disponiveis = discos.slice();
+
+  }
+
+  cover.className = "rolling";
+
+  var tempo = 0;
+
+  var roleta = setInterval(function(){
+
+    var temp =
+    disponiveis[
+      Math.floor(
+        Math.random() *
+        disponiveis.length
+      )
+    ];
+
+    mostrarPreview(temp);
+
+    tempo++;
+
+    if(tempo > 18){
+
+      clearInterval(roleta);
+
+      cover.className = "";
+
+      var escolhido =
+      disponiveis[
+        Math.floor(
+          Math.random() *
+          disponiveis.length
+        )
+      ];
+
+      mostrarDisco(escolhido);
+
+    }
+
+  }, 90);
+
 }
 
-document.getElementById("dr-btn").onclick = sortearDisco;
+document.getElementById(
+  "dr-btn"
+).onclick = sortearDisco;
 
-document.getElementById("dr-reset").onclick = function(){
+document.getElementById(
+  "dr-reset"
+).onclick = function(){
+
   sorteados = [];
+
   historico = [];
+
   salvar();
+
   atualizarHistorico();
-  document.getElementById("dr-status").textContent = "histórico zerado";
+
+  document.getElementById(
+    "dr-status"
+  ).textContent =
+  "histórico zerado";
+
 };
 
 atualizarHistorico();

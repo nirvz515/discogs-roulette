@@ -107,6 +107,13 @@ style.innerHTML = `
   cursor:pointer;
   font-family:"Courier New",monospace;
   font-weight:bold;
+  color:#b7ff8c;
+
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 
 #dr-btn:active,#dr-reset:active{
@@ -144,7 +151,7 @@ document.getElementById("sorteador-discogs").innerHTML = `
   <div class="dr-screen">
 
     <img
-      src="https://raw.githubusercontent.com/nirvz515/discogs-roulette/main/logo.png"
+      src="https://raw.githubusercontent.com/nirvz515/discogs-roulette/refs/heads/main/logo.png?v=500"
       id="dr-logo"
       alt="DISCO ROULETTE 2000"
     >
